@@ -7,25 +7,37 @@
   ],
   "data": [
     {
-      "courseId": 123456,
+      "courseId": 390595,
       "courseName": "Database Design",
-      "courseCrn": 12345,
+      "courseCrn": 19747,
       "seatsAvailable": 5,
-      "waitAvailable": 0
+      "waitAvailable": 0,
+      "lookupInfo": {
+        "subject": "CS",
+        "courseNumber": "3200"
+      }
     },
     {
-      "courseId": 123456,
+      "courseId": 377111,
       "courseName": "Fundamentals of Computer Science",
-      "courseCrn": 12345,
+      "courseCrn": 10330,
       "seatsAvailable": 4,
-      "waitAvailable": 0
+      "waitAvailable": 0,
+      "lookupInfo": {
+        "subject": "CS",
+        "courseNumber": "2500"
+      }
     },
     {
-      "courseId": 123,
-      "courseName": "abc",
-      "courseCrn": 123,
+      "courseId": 379874,
+      "courseName": "Electrical Engineering",
+      "courseCrn": 13093,
       "seatsAvailable": 5,
-      "waitAvailable": 0
+      "waitAvailable": 0,
+      "lookupInfo": {
+        "subject": "EECE",
+        "courseNumber": "2210"
+      }
     }
   ]
 }
