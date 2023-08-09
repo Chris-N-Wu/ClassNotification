@@ -1,0 +1,31 @@
+{
+  "termCode": 202410,
+  "ids": [
+    123456,
+    123456,
+    123
+  ],
+  "data": [
+    {
+      "courseId": 123456,
+      "courseName": "Database Design",
+      "courseCrn": 12345,
+      "seatsAvailable": 5,
+      "waitAvailable": 0
+    },
+    {
+      "courseId": 123456,
+      "courseName": "Fundamentals of Computer Science",
+      "courseCrn": 12345,
+      "seatsAvailable": 4,
+      "waitAvailable": 0
+    },
+    {
+      "courseId": 123,
+      "courseName": "abc",
+      "courseCrn": 123,
+      "seatsAvailable": 5,
+      "waitAvailable": 0
+    }
+  ]
+}
