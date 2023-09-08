@@ -1,16 +1,16 @@
 {
   "termCode": 202410,
   "ids": [
-    123456,
-    123456,
-    123
+    390595,
+    377111,
+    379874
   ],
   "data": [
     {
       "courseId": 390595,
       "courseName": "Database Design",
       "courseCrn": 19747,
-      "seatsAvailable": 5,
+      "seatsAvailable": 4,
       "waitAvailable": 0,
       "lookupInfo": {
         "subject": "CS",
@@ -21,7 +21,7 @@
       "courseId": 377111,
       "courseName": "Fundamentals of Computer Science",
       "courseCrn": 10330,
-      "seatsAvailable": 4,
+      "seatsAvailable": 22,
       "waitAvailable": 0,
       "lookupInfo": {
         "subject": "CS",
@@ -32,7 +32,7 @@
       "courseId": 379874,
       "courseName": "Electrical Engineering",
       "courseCrn": 13093,
-      "seatsAvailable": 5,
+      "seatsAvailable": 0,
       "waitAvailable": 0,
       "lookupInfo": {
         "subject": "EECE",

@@ -1,8 +1,7 @@
 import json
-import sys
+import time
 
 import requests
-from discord import SyncWebhook
 
 import config
 
@@ -35,6 +34,19 @@ class DataJson:
     """
     Getters
     """
+
+    def get_seats_available(self, course_id):
+        for course in self.courses:
+            if course_id == course['courseId']:
+                return course['seatsAvailable']
+
+    # updating the number of seats available for this course
+    def update_course_seats(self, course_id, new_seats):
+        # something cool, 'course' is a reference to the particular item in the list,
+        # so when updating 'course', the item itself in the list is updated as well
+        for course in self.courses:
+            if course_id == course['courseId']:
+                course['seatsAvailable'] = new_seats
 
     # adding a course to be tracked
     def add_tracked_course(self, course_id, course_name, course_crn, seats_available, wait_available, subject,
@@ -101,110 +113,88 @@ class BannerDataJson:
                 return course['waitAvailable']
 
 
-# setting the discord webhook
-webhook = SyncWebhook.from_url(url=config.webhook_url)
-"""
-# gaining access to our session
-clickContinue = requests.post(
-    url="https://nubanner.neu.edu/StudentRegistrationSsb/ssb/term/search?mode=search",
-    data={
-        "term": "202410"
-    },
-)
-
-# parsing the returned session
-headers = clickContinue.headers['Set-Cookie']
-headers = headers.split(';')
-# retrieving the JSESSIONID
-jsessionid = headers[0].split('=')[1]
-# retrieving nu banner-cookie
-nu_banner_cookie = headers[3].split('=')[1]
-
-# setting cookies
-cookies = {"nubanner-cookie": nu_banner_cookie, "JSESSIONID": jsessionid}
-
-# # resets input from last search
-# post = requests.post(
-#     url='https://nubanner.neu.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm',
-#     cookies=cookies
-# )
-
-get = requests.get(
-    url='https://nubanner.neu.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?'
-        'txt_subject=CS'
-        '&txt_courseNumber=3200'
-        '&txt_term=202410'
-        '&startDatepicker=&endDatepicker=&pageOffset=0'
-        '&pageMaxSize=100'
-        '&sortColumn=subjectDescription&sortDirection=asc',
-    cookies=cookies
-)
-print(get.text)
-
-response_json = get.json()
-
-
-seats_remaining = response_json['data'][1]['seatsAvailable']
-
 # user id for Dolphins0248
 # webhook.send('<@350046129892622336> IT WORKS!!!')
 # webhook.send("Database Design Has " + str(seats_remaining) + " Seats Remaining")
-"""
 
-if __name__ == '__main__':
-    # term code for Fall 2023-24 school year
-    term_code = '202410'
 
-    # gaining access to our session
-    clickContinue = requests.post(
-        url="https://nubanner.neu.edu/StudentRegistrationSsb/ssb/term/search?mode=search",
-        data={
-            "term": "202410"
-        },
-    )
+class Application:
+    def __init__(self, saved_data_path):
+        self.saved_data_path = saved_data_path
+        start_data = self.start_app()
+        self.cookies = start_data[0]
+        self.saved_data = start_data[1]
 
-    # parsing the returned session
-    headers = clickContinue.headers['Set-Cookie']
-    headers = headers.split(';')
-    # retrieving the JSESSIONID
-    jsessionid = headers[0].split('=')[1]
-    # retrieving nu banner-cookie
-    nu_banner_cookie = headers[3].split('=')[1]
-
-    # setting cookies
-    cookies = {"nubanner-cookie": nu_banner_cookie, "JSESSIONID": jsessionid}
-
-    # loading saved data
-    saved_data = DataJson('data.json')  # TODO: Replace hard coded path
-
-    # looping through each course in the saved courses to check their enrollment numbers
-    for course in saved_data.courses:
-        subject = course['lookupInfo']['subject']
-        course_number = course['lookupInfo']['courseNumber']
-
-        # string for course lookup
-        search_url = 'https://nubanner.neu.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?' \
-                     f'txt_subject={subject}' \
-                     f'&txt_courseNumber={course_number}' \
-                     f'&txt_term={term_code}' \
-                     '&startDatepicker=' \
-                     '&endDatepicker=&pageOffset=0' \
-                     '&pageMaxSize=100' \
-                     '&sortColumn=subjectDescription&sortDirection=asc'
-
-        print(search_url)
-
-        get = requests.get(url=search_url,
-                           cookies=cookies)
-
-        # print(get.json())
-        banner_data = BannerDataJson(get.json())
-        print(course['courseName'])
-        print(banner_data.get_seats_available(course['courseId']))
-
-        # resets input from last search
-        post = requests.post(
-            url='https://nubanner.neu.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm',
-            cookies=cookies
+    def start_app(self):
+        # gaining access to our session
+        click_continue = requests.post(
+            url='https://nubanner.neu.edu/StudentRegistrationSsb/ssb/term/search?mode=search',
+            data={
+                'term': config.term_code
+            },
         )
 
+        # parsing the returned session
+        headers = click_continue.headers['Set-Cookie']
+        headers = headers.split(';')
+        # retrieving the JSESSIONID
+        jsessionid = headers[0].split('=')[1]
+        # retrieving nu banner-cookie
+        nu_banner_cookie = headers[3].split('=')[1]
+
+        # setting cookies
+        cookies = {"nubanner-cookie": nu_banner_cookie, "JSESSIONID": jsessionid}
+
+        # loading saved data
+        saved_data = DataJson(self.saved_data_path)
+
+        return cookies, saved_data
+
+    def lookup_courses(self):
+        # looping through each course_data in the saved courses to check their enrollment numbers
+        for course_data in self.saved_data.courses:
+            subject = course_data['lookupInfo']['subject']
+            course_number = course_data['lookupInfo']['courseNumber']
+
+            # string for course_data lookup
+            search_url = 'https://nubanner.neu.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?' \
+                         f'txt_subject={subject}' \
+                         f'&txt_courseNumber={course_number}' \
+                         f'&txt_term={config.term_code}' \
+                         '&startDatepicker=' \
+                         '&endDatepicker=&pageOffset=0' \
+                         '&pageMaxSize=100' \
+                         '&sortColumn=subjectDescription&sortDirection=asc'
+
+            get = requests.get(url=search_url,
+                               cookies=self.cookies)
+
+            # print(get.json())
+            banner_data = BannerDataJson(get.json())
+            print(course_data['courseName'])
+            print(banner_data.get_seats_available(course_data['courseId']))
+
+            if banner_data.get_seats_available(course_data['courseId']) != \
+                    self.saved_data.get_seats_available(course_data['courseId']):
+                print("A")
+
+            self.reset_inputs()
+
+            data = {'content': "HI!"}
+            requests.post(url=config.webhook_url, data=data)
+
+    def reset_inputs(self):
+        # resets input from last search
+        requests.post(
+            url='https://nubanner.neu.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm',
+            cookies=self.cookies
+        )
+
+
+if __name__ == '__main__':
+
+    myApplication = Application('data.json')
+
+    while True:
+        myApplication.lookup_courses()
+        time.sleep(15)
