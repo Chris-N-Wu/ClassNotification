@@ -176,10 +176,11 @@ class Application:
             get = requests.get(url=search_url(subject, course_number),
                                cookies=self.cookies)
 
-            print(get.json())
             banner_data = BannerDataJson(get.json())
-            print(course_data['courseName'])
-            print(banner_data.get_seats_available(course_data['courseCrn']))
+
+            curr_time = time.strftime("%H:%M:%S")
+            print(curr_time, "-", course_data['courseName'])
+            print(banner_data.get_seats_available(course_data['courseCrn']), "Seats")
 
             # if banner_data.get_seats_available(course_data['courseCrn']) != \
             #         self.saved_data.get_seats_available(course_data['courseCrn']):

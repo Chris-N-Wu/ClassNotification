@@ -14,3 +14,7 @@ their extensive writeup.
 ## Discord Webhook
 Yo
 [Discord Webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)
+
+## .EXE
+To create an .EXE simply enter ```py -m PyInstaller --onefile main.py```, add ```-w``` if no command prompt windo
+is desired
